@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>WebGL Seminar Example</title>
+		<script type="text/javascript" src="triangle.js"></script>
+		<script type="text/javascript" src="wglshader.js"></script>
+		<script type="text/javascript" src="app.js"></script>
+		<script id="base-vert" type="x-shader/x-vertex">
+			precision lowp float;	// Low precision for speed and because vertex positions don't really matter here.
+			attribute vec3 vertPos; // Incoming vertex position.
+			attribute vec4 vertColor;	// Incoming vertex colour.
+
+			uniform float factor;
+			
+			varying vec4 vColor; // Outgoing vertex colour, sent to the fragment shader after interpolation.
+
+			void main(void) {
+				vec3 currentVertex = vec3(vertPos);
+				currentVertex.x = sin(factor);
+				// Transform the incoming vertex position by the transformation matrices and report it.
+				gl_Position = vec4(currentVertex, 1.0);
+				// Copy the incoming vertex colour data to the outgoing vertex colour variable.
+				vColor = vertColor;
+			}
+		</script>
+		<script id="base-frag" type="x-shader/x-fragment">
+			precision lowp float; 
+			varying vec4 vColor;	// The vertex colour received from the vertex shader, interpolated
+									// to the current fragment coordinate.
+
+			void main(void) {
+				vec4 incoming = vec4(vColor);
+				incoming.r*=(1.0);
+				gl_FragColor = incoming;
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<canvas id="gl_canvas" width="400" height="300"></canvas>
+	</body>
